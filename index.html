@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Performance Prediction</title>
+</head>
+<body>
+    <h1>Student Performance Prediction 🎓</h1>
+    <form method="POST">
+        <label>Study Hours per Week:</label><br>
+        <input type="number" name="study_hours" required><br><br>
+
+        <label>Attendance (%):</label><br>
+        <input type="number" name="attendance" required><br><br>
+
+        <label>Previous Grade (%):</label><br>
+        <input type="number" name="previous_grade" required><br><br>
+
+        <label>Extra-Curricular (1=Yes, 0=No):</label><br>
+        <input type="number" name="extra_curricular" min="0" max="1" required><br><br>
+
+        <input type="submit" value="Predict">
+    </form>
+
+    <h2>{{ prediction_text }}</h2>
+</body>
+</html>
