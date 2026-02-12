@@ -1,34 +1,33 @@
-from flask import Flask, render_template, request
+import streamlit as st
 import pickle
 import numpy as np
 
-app = Flask(__name__)
-
-# Load model
+# Load the trained model
 with open("student_model.pkl", "rb") as file:
     model = pickle.load(file)
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    prediction_text = ""   # MUST exist
+st.title("🎓 Student Performance Prediction")
 
-    if request.method == "POST":
-        study_hours = float(request.form['study_hours'])
-        attendance = float(request.form['attendance'])
-        previous_grade = float(request.form['previous_grade'])
-        extra_curricular = int(request.form['extra_curricular'])
+st.write("Enter student details below:")
 
-        input_data = np.array([[study_hours, attendance, previous_grade, extra_curricular]])
+# User inputs
+study_hours = st.number_input("Study Hours per Week", min_value=0, max_value=50)
+attendance = st.number_input("Attendance (%)", min_value=0, max_value=100)
+previous_grade = st.number_input("Previous Grade (%)", min_value=0, max_value=100)
+extra_curricular = st.selectbox(
+    "Extra-Curricular Activities",
+    options=[0, 1],
+    format_func=lambda x: "Yes" if x == 1 else "No"
+)
 
-        prediction = model.predict(input_data)[0]
+# Predict button
+if st.button("Predict"):
+    input_data = np.array([[study_hours, attendance, previous_grade, extra_curricular]])
+    prediction = model.predict(input_data)[0]
 
-        if prediction == 1:
-            prediction_text = "PASSED ✅"
-        else:
-            prediction_text = "FAILED ❌"
+    # POPUP-STYLE RESULT
+    if prediction == 1:
+        st.success("🎉 PASSED ✅")
+    else:
+        st.error("❌ FAILED")
 
-    # 👇 THIS LINE IS CRITICAL
-    return render_template("index.html", prediction_text=prediction_text)
-
-if __name__ == "__main__":
-    app.run(debug=True)
